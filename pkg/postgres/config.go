@@ -12,6 +12,7 @@ type Config struct {
 	User     string
 	Password string
 	DBName   string
+	SSL string
 }
 
 func LoadConfig() (Config, error){
@@ -39,9 +40,14 @@ func LoadConfig() (Config, error){
 		return Config{}, fmt.Errorf("failed load PG_PASSWORD")
 	}
 
-	dbName, exist := os.LookupEnv("DB_NAME")
+	dbName, exist := os.LookupEnv("PG_DB_NAME")
 	if !exist {
-		return Config{}, fmt.Errorf("failed load DB_NAME")
+		return Config{}, fmt.Errorf("failed load PG_DB_NAME")
+	}
+
+	ssl, exist := os.LookupEnv("PG_SSL")
+	if !exist {
+		return Config{}, fmt.Errorf("failed load PG_SSL")
 	}
 
 	return Config{
@@ -50,10 +56,11 @@ func LoadConfig() (Config, error){
 		user,
 		password,
 		dbName,
+		ssl,
 	}, nil
 }
 
 func (cfg Config) GetConnectPath() string {
-	return fmt.Sprintf("host=%v port=%v user=%v password=%v dbname=%v sslmode=disable",
-		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DBName)
+	return fmt.Sprintf("host=%v port=%v user=%v password=%v dbname=%v sslmode=%v",
+		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DBName, cfg.SSL)
 }

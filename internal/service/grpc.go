@@ -3,20 +3,25 @@ package service
 import (
 	ssov1 "auth/pkg/grpc/auth"
 	"context"
-	"database/sql"
 )
+
+type Repo interface{
+	CheckLogin(string) (bool, error)
+	CreateUser(string, string) (int, error)
+	CheckUser(string, string) (int, error)
+}
 
 type Service struct{
 	ctx context.Context
-	db *sql.DB
+	repo Repo
 }
 
-func NewService(ctx context.Context, db *sql.DB) *Service{
-	return &Service{ctx, db}
+func NewService(ctx context.Context, repo Repo) *Service{
+	return &Service{ctx, repo}
 }
 
-func (h *Service) AddUser(log, pas string) (int, error){
-	return 0, nil
+func (s *Service) CreateUser(log, pas string) (int, error){
+	return s.repo.CreateUser(log, pas)
 }
 func (h *Service) Register(context.Context, *ssov1.RegisterRequest) (*ssov1.RegisterResponse, error){
 	return &ssov1.RegisterResponse{}, nil

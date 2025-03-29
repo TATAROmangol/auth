@@ -27,7 +27,7 @@ func LoggerInterceptor(pCtx context.Context, l *logger.Logger) func(
 
 		resp, err := handler(ctx, req)
 		if err != nil {
-			l.ErrorContext(pCtx, "failed in method", "error", err)
+			l.ErrorContext(pCtx, "error", err)
 			return nil, err
 		}
 

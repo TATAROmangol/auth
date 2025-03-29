@@ -1,5 +1,5 @@
 package gv1
 
 type Auther interface {
-	AddUser(string, string) (int, error)
+	CreateUser(string, string) (int, error)
 }
