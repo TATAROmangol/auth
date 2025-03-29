@@ -2,6 +2,8 @@ package main
 
 import (
 	"auth/internal/config"
+	"auth/internal/service"
+	"auth/internal/transport/grpc/gv1"
 	"auth/pkg/logger"
 	"auth/pkg/postgres"
 	"context"
@@ -11,12 +13,15 @@ func main() {
 	cfg := config.MustLoad()
 
 	ctx := context.Background()
-	ctx = logger.ImportInContext(ctx)
+
+	l := logger.New()
 
 	db, err := postgres.NewConnect(cfg.PG)
 	if err != nil{
-		logger.GetFromCtx(ctx).ErrorContext(ctx, "failed to connect postgres", "err", err)
+		l.ErrorContext(ctx, "failed to connect postgres", "err", err)
 	}
 
-	
+	service := service.NewService(ctx, db)
+	server := gv1.New(ctx, cfg.GRPC, l, service)
+	server.Run()
 }
