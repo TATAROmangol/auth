@@ -52,7 +52,7 @@ func (r *Repository) CreateUser(login, password string) (int, error){
 	return id, nil
 }
 
-func (r *Repository) CheckUser(login, password string) (int, error){
+func (r *Repository) CheckPassword(login, password string) (int, error){
 	id := -1
 
 	stmt, err := r.db.Prepare(`
@@ -68,7 +68,7 @@ func (r *Repository) CheckUser(login, password string) (int, error){
 		return id, fmt.Errorf("failed in check user: %v", err)
 	}
 	if id == -1{
-		return id, fmt.Errorf("incorrect user data: %v", err)
+		return id, fmt.Errorf("incorrect password: %v", err)
 	}
 
 	return id, nil

@@ -19,13 +19,13 @@ func Register(gRPCServer *grpc.Server, service Auther) {
 func (s *Api) Login(
 	ctx context.Context,
 	in *ssov1.LoginRequest,
-) (*ssov1.LoginResponse, error) {
-	return &ssov1.LoginResponse{}, nil
+) (*ssov1.TokenResponse, error) {
+	return &ssov1.TokenResponse{}, nil
 }
 
 func (s *Api) Register(
 	ctx context.Context,
 	in *ssov1.RegisterRequest,
-) (*ssov1.RegisterResponse, error) {
-	return &ssov1.RegisterResponse{}, nil
+) (*ssov1.TokenResponse, error) {
+	return &ssov1.TokenResponse{}, nil
 }
