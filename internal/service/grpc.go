@@ -1,9 +1,10 @@
 package service
 
 import (
-	"auth/pkg/jwt"
 	"fmt"
 )
+
+//go:generate go run github.com/vektra/mockery/v2@v2.53.3
 
 type Repo interface{
 	CheckLogin(string) (bool, error)
@@ -11,12 +12,16 @@ type Repo interface{
 	CheckPassword(string, string) (int, error)
 }
 
-type Service struct{
-	repo Repo
-	jwt *jwt.JWT
+type JWT interface{
+	GenerateToken(int) (string, error)
 }
 
-func NewService(repo Repo, jwt *jwt.JWT) *Service{
+type Service struct{
+	repo Repo
+	jwt JWT
+}
+
+func NewService(repo Repo, jwt JWT) *Service{
 	return &Service{repo, jwt}
 }
 
@@ -35,6 +40,9 @@ func (s *Service) Register(log, pas string) (string, error){
 	}
 
 	token, err := s.jwt.GenerateToken(id)
+	if err != nil{
+		return "", fmt.Errorf("failed in jwt: %v", err)
+	}
 
 	return token, nil
 }
@@ -54,6 +62,9 @@ func (s *Service) Login(log, pas string) (string, error){
 	}
 
 	token, err := s.jwt.GenerateToken(id)
+	if err != nil{
+		return "", fmt.Errorf("failed in jwt: %v", err)
+	}
 
 	return token, nil
 }

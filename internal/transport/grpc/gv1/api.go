@@ -7,12 +7,17 @@ import (
 	"google.golang.org/grpc"
 )
 
-type Api struct {
-	ssov1.UnimplementedAuthServer
-	service Auther
+type Auth interface {
+	Register(string, string) (string, error)
+	Login(string, string) (string, error)
 }
 
-func Register(gRPCServer *grpc.Server, service Auther) {
+type Api struct {
+	ssov1.UnimplementedAuthServer
+	service Auth
+}
+
+func Register(gRPCServer *grpc.Server, service Auth) {
 	ssov1.RegisterAuthServer(gRPCServer, &Api{service: service})
 }
 

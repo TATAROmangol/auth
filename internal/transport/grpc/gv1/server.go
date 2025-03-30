@@ -15,7 +15,7 @@ type Server struct{
 	server *grpc.Server
 }
 
-func New(ctx context.Context, cfg Config, l *logger.Logger, service Auther) *Server{
+func New(ctx context.Context, cfg Config, l *logger.Logger, service Auth) *Server{
 	server := grpc.NewServer(
 		grpc.UnaryInterceptor(LoggerInterceptor(ctx, l)),
 	)

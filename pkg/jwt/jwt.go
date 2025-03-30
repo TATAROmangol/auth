@@ -23,7 +23,7 @@ func New() (*JWT, error) {
 
 func (j *JWT) GenerateToken(id int) (string, error) {
 	claims := jwt.MapClaims{
-		"user_id": id,
+		"id": id,
 		"exp":     time.Now().Add(time.Hour * 24).Unix(),
 	}
 
