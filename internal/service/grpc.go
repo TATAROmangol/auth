@@ -1,13 +1,14 @@
 package service
 
 import (
+	"auth/internal/errors"
 	"fmt"
 )
 
-//go:generate go run github.com/vektra/mockery/v2@v2.53.3
+//go:generate mockery --all --output=./mocks
 
 type Repo interface{
-	CheckLogin(string) (bool, error)
+	TakenLogin(string) (bool, error)
 	CreateUser(string, string) (int, error)
 	CheckPassword(string, string) (int, error)
 }
@@ -26,12 +27,12 @@ func NewService(repo Repo, jwt JWT) *Service{
 }
 
 func (s *Service) Register(log, pas string) (string, error){
-	exist, err := s.repo.CheckLogin(log)
+	exist, err := s.repo.TakenLogin(log)
 	if err != nil{
 		return "", fmt.Errorf("failed in db: %v", err)
 	}
 	if exist{
-		return "", fmt.Errorf("login already taken")
+		return "", errors.ErrLoginTaken
 	}
 
 	id, err := s.repo.CreateUser(log, pas)
@@ -48,17 +49,20 @@ func (s *Service) Register(log, pas string) (string, error){
 }
 
 func (s *Service) Login(log, pas string) (string, error){
-	exist, err := s.repo.CheckLogin(log)
+	exist, err := s.repo.TakenLogin(log)
 	if err != nil{
 		return "", fmt.Errorf("failed in db: %v", err)
 	}
-	if exist{
-		return "", fmt.Errorf("login already taken")
+	if !exist{
+		return "", errors.ErrUnknownLogin
 	}
 
 	id, err := s.repo.CheckPassword(log, pas)
 	if err != nil{
 		return "", fmt.Errorf("failed in db: %v", err)
+	}
+	if id == -1{
+		return "", errors.ErrIncorrectPassword
 	}
 
 	token, err := s.jwt.GenerateToken(id)

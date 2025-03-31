@@ -7,6 +7,8 @@ import (
 	"google.golang.org/grpc"
 )
 
+//go:generate mockery --all --output=./mocks 
+
 type Auth interface {
 	Register(string, string) (string, error)
 	Login(string, string) (string, error)
